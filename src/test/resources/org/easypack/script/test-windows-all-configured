@@ -1,0 +1,11 @@
+setLocal
+
+cd %~dp0..
+
+echo 'Hola'
+ 
+SET "JAVA_OPTS=%JAVA_OPTS% -Xms1G -Xmx=3G -Denvironment=prod" 
+
+SET "JAVA_ARGS=%JAVA_ARGS% hello"
+
+java %JAVA_OPTS% -jar libs\my-project.jar %JAVA_ARGS%

@@ -1,0 +1,5 @@
+#!/bin/bash 
+
+cd `dirname $0`/..
+
+java $JAVA_OPTS -jar libs/my-project.jar $JAVA_ARGS

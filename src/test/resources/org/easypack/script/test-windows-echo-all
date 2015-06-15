@@ -1,0 +1,5 @@
+setLocal
+
+cd %~dp0..
+
+java %JAVA_OPTS% -jar libs\my-project.jar %JAVA_ARGS%

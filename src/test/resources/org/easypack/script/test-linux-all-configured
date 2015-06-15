@@ -1,0 +1,11 @@
+#!/bin/bash -x 
+
+cd `dirname $0`/..
+
+echo 'Hola'
+ 
+JAVA_OPTS="$JAVA_OPTS -Xms1G -Xmx=3G -Denvironment=prod"
+
+JAVA_ARGS="$JAVA_ARGS hello"
+
+java $JAVA_OPTS -jar libs/my-project.jar $JAVA_ARGS

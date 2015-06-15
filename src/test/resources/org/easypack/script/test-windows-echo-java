@@ -1,0 +1,9 @@
+@echo off
+
+setLocal
+
+cd %~dp0..
+
+@echo on
+
+java %JAVA_OPTS% -jar libs\my-project.jar %JAVA_ARGS%

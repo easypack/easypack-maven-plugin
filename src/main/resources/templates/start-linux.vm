@@ -1,0 +1,22 @@
+#!/bin/bash #if($echo.equals("all"))-x #end
+
+
+cd `dirname $0`/..
+
+#if ($preStart)
+$preStart
+ 
+#end
+#if (!$opts.isEmpty())
+JAVA_OPTS="$JAVA_OPTS $opts"
+
+#end
+#if (!$args.isEmpty())
+JAVA_ARGS="$JAVA_ARGS $args"
+
+#end
+#if($echo.equals("java"))
+set -x
+
+#end
+java $JAVA_OPTS -jar $jar $JAVA_ARGS
