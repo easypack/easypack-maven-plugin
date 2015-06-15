@@ -6,11 +6,21 @@
 	<artifactId>easypack-maven-plugin</artifactId>
 	<version>1.0-SNAPSHOT</version>
 	<packaging>maven-plugin</packaging>
+	<name>EasyPack Maven Plugin</name>
+	<description>
+		A Maven plugin for facilitating the distribution of Java applications
+	    in tar, zip and tar.gz format.
+	 </description>
 
-	<name>Easy Pack Maven Plugin</name>
+	<url>https://github.com/agusmunioz/easypack-maven-plugin</url>
 
-	<!-- FIXME change it to the project's website -->
-	<url>http://maven.apache.org</url>
+	<developers>
+		<developer>
+			<id>agusmunioz</id>
+			<name>Agustin Muñoz</name>
+			<email>agustinmunioz@gmail.com</email>
+		</developer>
+	</developers>
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
