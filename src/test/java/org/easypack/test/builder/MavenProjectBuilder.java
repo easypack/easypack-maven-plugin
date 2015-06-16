@@ -38,7 +38,8 @@ public class MavenProjectBuilder {
 		project.setFile(file);
 
 		Build build = new Build();
-		build.setDirectory(path + "/target");
+		build.setDirectory(path);
+		build.setOutputDirectory(path + "/target");
 		build.setFinalName("mock-project-" + project.getVersion());
 		project.setBuild(build);
 

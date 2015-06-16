@@ -1,9 +1,12 @@
 package org.easypack.mojo;
 
 import java.io.File;
+import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.apache.commons.lang.StringUtils;
+import org.apache.maven.model.Resource;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.project.MavenProject;
@@ -33,21 +36,21 @@ import org.powermock.modules.junit4.PowerMockRunner;
 @PrepareForTest({ IoFactory.class, FileUtils.class })
 public class CopyBinFilesMojoTest {
 
-	private CopyBinFilesMojo mojo;
+	/**
+	 * Known excluded files.
+	 */
+	private static final String EXCLUSIONS = "/bin/start-linux,/bin/start-windows";
 
 	private File binFolder;
+
+	private MavenProject project;
+
+	private File resourceFolder;
 
 	@Before
 	public void init() {
 
-		MavenProject project = MavenProjectBuilder.dummy();
-
-		String target = project.getBuild().getOutputDirectory();
-
-		this.mojo = (CopyBinFilesMojo) MojoBuilder
-				.build(new CopyBinFilesMojo()).with(project)
-				.with("outputDirectory", target)
-				.with("platforms", "linux,windows").with("echo", "").get();
+		this.project = MavenProjectBuilder.dummy();
 
 		PowerMockito.mockStatic(FileUtils.class);
 
@@ -56,10 +59,19 @@ public class CopyBinFilesMojoTest {
 
 		PowerMockito.mockStatic(IoFactory.class);
 
+		String target = project.getBuild().getOutputDirectory();
+
 		this.binFolder = FileMock.mock();
 
 		PowerMockito.when(IoFactory.file(target + "/" + FolderConstants.BIN))
 				.thenReturn(binFolder);
+
+		Resource resources = this.project.getResources().get(0);
+
+		this.resourceFolder = new File(resources.getDirectory());
+
+		PowerMockito.when(IoFactory.file(resources.getDirectory())).thenReturn(
+				this.resourceFolder);
 	}
 
 	/**
@@ -71,13 +83,99 @@ public class CopyBinFilesMojoTest {
 
 		List<File> files = new LinkedList<File>();
 
-		FileUtilsMock.getFiles(null, CopyBinFilesMojo.BIN_REGEX, "", files);		
+		FileUtilsMock.getFiles(this.resourceFolder, CopyBinFilesMojo.BIN_REGEX,
+				EXCLUSIONS, files);
+
+		CopyBinFilesMojo mojo = (CopyBinFilesMojo) MojoBuilder
+				.build(new CopyBinFilesMojo())
+				.with(project)
+				.with("outputDirectory",
+						project.getBuild().getOutputDirectory())
+				.with("platforms", "linux,windows").with("echo", "").get();
 
 		try {
 
-			this.mojo.execute();
-			
+			mojo.execute();
+
 			FileUtilsMock.verifyNoFilesCopied();
+
+		} catch (MojoExecutionException | MojoFailureException e) {
+
+			Assert.fail("Unexpected exception. " + e);
+
+		}
+	}
+
+	/**
+	 * Test any file under project src/main/resources/bin folder is copied to
+	 * the final bin folder.
+	 */
+	@Test
+	public void filesInBinFolder() {
+
+		CopyBinFilesMojo mojo = (CopyBinFilesMojo) MojoBuilder
+				.build(new CopyBinFilesMojo())
+				.with(project)
+				.with("outputDirectory",
+						project.getBuild().getOutputDirectory())
+				.with("platforms", "linux,windows").with("echo", "").get();
+
+		List<File> expected = Arrays.asList(new File(
+				"src/main/resources/bin/hola.sh"), new File(
+				"src/main/resources/bin/chau.sh"));
+
+		FileUtilsMock.getFiles(this.resourceFolder, CopyBinFilesMojo.BIN_REGEX,
+				EXCLUSIONS, expected);
+
+		try {
+
+			mojo.execute();
+
+			for (File file : expected) {
+				FileUtilsMock.verifyCopied(file, this.binFolder);
+			}
+
+		} catch (MojoExecutionException | MojoFailureException e) {
+
+			Assert.fail("Unexpected exception. " + e);
+
+		}
+	}
+
+	/**
+	 * Test a specific file and a file inside a folder are copied in the final
+	 * bin folder.
+	 */
+	@Test
+	public void includes() {
+
+		String[] includes = new String[] { "scripts/hola.sh", "tests/" };
+
+		CopyBinFilesMojo mojo = (CopyBinFilesMojo) MojoBuilder
+				.build(new CopyBinFilesMojo())
+				.with(project)
+				.with("outputDirectory",
+						project.getBuild().getOutputDirectory())
+				.with("platforms", "linux,windows").with("echo", "")
+				.with("bin", includes).get();
+
+		String inclusions = StringUtils.join(includes, ",") + ","
+				+ CopyBinFilesMojo.BIN_REGEX;
+
+		List<File> expected = Arrays.asList(new File(
+				"src/main/resources/scripts/hola.sh"), new File(
+				"src/main/resources/tests/chau.sh"));
+
+		FileUtilsMock.getFiles(this.resourceFolder, inclusions, EXCLUSIONS,
+				expected);
+
+		try {
+
+			mojo.execute();
+
+			for (File file : expected) {
+				FileUtilsMock.verifyCopied(file, this.binFolder);
+			}
 
 		} catch (MojoExecutionException | MojoFailureException e) {
 

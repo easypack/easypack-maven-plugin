@@ -62,32 +62,6 @@ public final class PathUtils {
 	}
 
 	/**
-	 * Creates a path with slashes at the beginning and the end.
-	 * 
-	 * @param names
-	 *            folder names.
-	 * 
-	 * @return the path.
-	 */
-	public static String slashed(String... names) {
-
-		String start = "";
-
-		if (!names[0].startsWith(SEPARATOR)) {
-			start = SEPARATOR;
-		}
-
-		String end = "";
-
-		if (!names[names.length - 1].endsWith(SEPARATOR)) {
-
-			end = SEPARATOR;
-		}
-
-		return start + path(names) + end;
-	}
-
-	/**
 	 * Subtracts part of a path. It doesn't follow any arithmetic property of
 	 * the subtraction operation.
 	 * 

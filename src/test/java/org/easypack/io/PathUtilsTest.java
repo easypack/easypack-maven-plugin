@@ -51,21 +51,6 @@ public class PathUtilsTest {
 		Assert.assertTrue("Incorrect path for no name.", path.isEmpty());
 	}
 
-	/**
-	 * Test the path build with slashed.
-	 */
-	@Test
-	public void slashed() {
-
-		String expected = PathUtils.SEPARATOR + "myfolder"
-				+ PathUtils.SEPARATOR + "another" + PathUtils.SEPARATOR
-				+ "athird" + PathUtils.SEPARATOR;
-
-		String path = PathUtils.slashed("myfolder", "another", "athird");
-
-		Assert.assertEquals("Incorrect slashed path.", expected, path);
-	}
-
 	@Test
 	public void fileName() {
 

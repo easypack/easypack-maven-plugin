@@ -59,4 +59,27 @@ public class FileUtilsMock {
 		}
 
 	}
+
+	/**
+	 * Verifies if the {@link FileUtils#copyFileToDirectory(File, File)} method
+	 * is called.
+	 * 
+	 * @param file
+	 *            the file to be copied.
+	 * @param target
+	 *            the destination folder.
+	 */
+	public static void verifyCopied(File file, File target) {
+
+		PowerMockito.verifyStatic(Mockito.times(1));
+
+		try {
+
+			FileUtils.copyFileToDirectory(file, target);
+
+		} catch (IOException e) {
+			// Won't happen. Mock side effect.
+		}
+	}
+
 }
