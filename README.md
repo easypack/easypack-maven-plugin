@@ -2,7 +2,7 @@
 
 EasyPack is a Maven plugin that facilitates the distribution of Java applications in **tar**, **zip** and **tar.gz** formats.
 
-The plugin introduces tree new packaging types for using instead of the standard jar and war options. The final artifact is a tar, zip or tar.gz archive that includes the java application.
+The plugin introduces three new packaging types for using instead of the standard jar and war options. The final artifact is a tar, zip or tar.gz archive that includes the java application.
 
 The pom will look like:
 
