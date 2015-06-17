@@ -30,12 +30,12 @@
 								org.apache.maven.plugins:maven-surefire-plugin:test
 							</test>
 							<prepare-package>
-								org.easypack:easypack-maven-plugin:libs,
-								org.easypack:easypack-maven-plugin:scripts,
-								org.easypack:easypack-maven-plugin:copy
+								com.github.agusmunioz:easypack-maven-plugin:libs,
+								com.github.agusmunioz:easypack-maven-plugin:scripts,
+								com.github.agusmunioz:easypack-maven-plugin:copy
 							</prepare-package>
 							<package>
-								org.easypack:easypack-maven-plugin:tar
+								com.github.agusmunioz:easypack-maven-plugin:tar
 							</package>
 							<install>
 								org.apache.maven.plugins:maven-install-plugin:install
@@ -91,12 +91,12 @@
 								org.apache.maven.plugins:maven-surefire-plugin:test
 							</test>
 							<prepare-package>
-								org.easypack:easypack-maven-plugin:libs,
-								org.easypack:easypack-maven-plugin:scripts,
-								org.easypack:easypack-maven-plugin:copy
+								com.github.agusmunioz:easypack-maven-plugin:libs,
+								com.github.agusmunioz:easypack-maven-plugin:scripts,
+								com.github.agusmunioz:easypack-maven-plugin:copy
 							</prepare-package>
 							<package>
-								org.easypack:easypack-maven-plugin:zip
+								com.github.agusmunioz:easypack-maven-plugin:zip
 							</package>
 							<install>
 								org.apache.maven.plugins:maven-install-plugin:install
@@ -152,12 +152,12 @@
 								org.apache.maven.plugins:maven-surefire-plugin:test
 							</test>
 							<prepare-package>
-								org.easypack:easypack-maven-plugin:libs,
-								org.easypack:easypack-maven-plugin:scripts,
-								org.easypack:easypack-maven-plugin:copy
+								com.github.agusmunioz:easypack-maven-plugin:libs,
+								com.github.agusmunioz:easypack-maven-plugin:scripts,
+								com.github.agusmunioz:easypack-maven-plugin:copy
 							</prepare-package>
 							<package>
-								org.easypack:easypack-maven-plugin:targz
+								com.github.agusmunioz:easypack-maven-plugin:targz
 							</package>
 							<install>
 								org.apache.maven.plugins:maven-install-plugin:install
