@@ -7,20 +7,20 @@ The plugin introduces three new packaging types for using instead of the standar
 The pom will look like:
 
 ``` xml                            
-              <groupId>org.company</groupId>
+              <groupId>com.my-company</groupId>
               <artifactId>my-app</artifactId>
               <version>1.0-SNAPSHOT<version>
               <packaing> jtar </packaging>
 ```                                
 ``` xml                            
-              <groupId>org.company</groupId>
+              <groupId>com.my-company</groupId>
               <artifactId>my-app</artifactId>
               <version>1.0-SNAPSHOT<version>
               <packaing> jzip </packaging>
 ```  
 
 ``` xml                            
-              <groupId>org.company</groupId>
+              <groupId>com.my-company</groupId>
               <artifactId>my-app</artifactId>
               <version>1.0-SNAPSHOT<version>
               <packaing> jtargz </packaging>
