@@ -1,13 +1,11 @@
 package com.github.easypack.io;
 
-import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
-
 import org.junit.Assert;
-import org.junit.Ignore;
 import org.junit.Test;
-
-import com.github.easypack.io.PathUtils;
+import org.junit.runner.RunWith;
+import org.powermock.api.mockito.PowerMockito;
+import org.powermock.core.classloader.annotations.PrepareForTest;
+import org.powermock.modules.junit4.PowerMockRunner;
 
 /**
  * Unit test for {@link PathUtils}.
@@ -15,6 +13,8 @@ import com.github.easypack.io.PathUtils;
  * @author agusmunioz
  * 
  */
+@RunWith(PowerMockRunner.class)
+@PrepareForTest(PathSeparator.class)
 public class PathUtilsTest {
 
 	/**
@@ -34,8 +34,8 @@ public class PathUtilsTest {
 	@Test
 	public void severalNames() {
 
-		String expected = "myfolder" + PathUtils.SEPARATOR + "another"
-				+ PathUtils.SEPARATOR + "athird";
+		String expected = "myfolder" + PathSeparator.get() + "another"
+				+ PathSeparator.get() + "athird";
 
 		String path = PathUtils.path("myfolder", "another", "athird");
 
@@ -56,8 +56,8 @@ public class PathUtilsTest {
 	@Test
 	public void fileName() {
 
-		String expected = "$HOME" + PathUtils.SEPARATOR + "varnish"
-				+ PathUtils.SEPARATOR + "default.vcl";
+		String expected = "$HOME" + PathSeparator.get() + "varnish"
+				+ PathSeparator.get() + "default.vcl";
 
 		String file = PathUtils.file("vcl", "$HOME", "varnish", "default");
 
@@ -70,16 +70,16 @@ public class PathUtilsTest {
 	@Test
 	public void subtractFirstPart() {
 
-		String minuend = "src" + PathUtils.SEPARATOR + "main"
-				+ PathUtils.SEPARATOR + "resources" + PathUtils.SEPARATOR
-				+ "bin" + PathUtils.SEPARATOR + "start-linux";
+		String minuend = "src" + PathSeparator.get() + "main"
+				+ PathSeparator.get() + "resources" + PathSeparator.get()
+				+ "bin" + PathSeparator.get() + "start-linux";
 
-		String subtrahend = "src" + PathUtils.SEPARATOR + "main"
-				+ PathUtils.SEPARATOR + "resources" + PathUtils.SEPARATOR;
+		String subtrahend = "src" + PathSeparator.get() + "main"
+				+ PathSeparator.get() + "resources" + PathSeparator.get();
 
 		String result = PathUtils.subtract(minuend, subtrahend);
 
-		String expected = "bin" + PathUtils.SEPARATOR + "start-linux";
+		String expected = "bin" + PathSeparator.get() + "start-linux";
 
 		Assert.assertEquals("Unexpected path subtraction", expected, result);
 	}
@@ -90,17 +90,17 @@ public class PathUtilsTest {
 	@Test
 	public void subtractLastPart() {
 
-		String minuend = "src" + PathUtils.SEPARATOR + "main"
-				+ PathUtils.SEPARATOR + "resources" + PathUtils.SEPARATOR
-				+ "bin" + PathUtils.SEPARATOR + "start-linux";
+		String minuend = "src" + PathSeparator.get() + "main"
+				+ PathSeparator.get() + "resources" + PathSeparator.get()
+				+ "bin" + PathSeparator.get() + "start-linux";
 
-		String subtrahend = "resources" + PathUtils.SEPARATOR + "bin"
-				+ PathUtils.SEPARATOR + "start-linux";
+		String subtrahend = "resources" + PathSeparator.get() + "bin"
+				+ PathSeparator.get() + "start-linux";
 
 		String result = PathUtils.subtract(minuend, subtrahend);
 
-		String expected = "src" + PathUtils.SEPARATOR + "main"
-				+ PathUtils.SEPARATOR;
+		String expected = "src" + PathSeparator.get() + "main"
+				+ PathSeparator.get();
 
 		Assert.assertEquals("Unexpected path subtraction", expected, result);
 	}
@@ -111,17 +111,17 @@ public class PathUtilsTest {
 	@Test
 	public void subtractMiddlePart() {
 
-		String minuend = "src" + PathUtils.SEPARATOR + "main"
-				+ PathUtils.SEPARATOR + "resources" + PathUtils.SEPARATOR
-				+ "bin" + PathUtils.SEPARATOR + "start-linux";
+		String minuend = "src" + PathSeparator.get() + "main"
+				+ PathSeparator.get() + "resources" + PathSeparator.get()
+				+ "bin" + PathSeparator.get() + "start-linux";
 
-		String subtrahend = PathUtils.SEPARATOR + "main" + PathUtils.SEPARATOR
+		String subtrahend = PathSeparator.get() + "main" + PathSeparator.get()
 				+ "resources";
 
 		String result = PathUtils.subtract(minuend, subtrahend);
 
-		String expected = "src" + PathUtils.SEPARATOR + "bin"
-				+ PathUtils.SEPARATOR + "start-linux";
+		String expected = "src" + PathSeparator.get() + "bin"
+				+ PathSeparator.get() + "start-linux";
 
 		Assert.assertEquals("Unexpected path subtraction", expected, result);
 	}
@@ -130,8 +130,13 @@ public class PathUtilsTest {
 	 * Transform a windows path to a Linux.
 	 */
 	@Test
-	@Ignore
 	public void osifyWinToLinux() {
+
+		PowerMockito.mockStatic(PathSeparator.class);
+
+		PowerMockito.when(PathSeparator.get()).thenReturn("/");
+
+		PowerMockito.when(PathSeparator.migrate("/")).thenReturn("\\");
 
 		String osifyed = PathUtils.osify("\\src\\main\\resources");
 
@@ -145,8 +150,11 @@ public class PathUtilsTest {
 	 * Transform a Linux path to a Linux.
 	 */
 	@Test
-	@Ignore
 	public void osifyLinuxToLinux() {
+
+		PowerMockito.mockStatic(PathSeparator.class);
+
+		PowerMockito.when(PathSeparator.get()).thenReturn("/");
 
 		String osifyed = PathUtils.osify("/src/main/resources");
 
@@ -157,16 +165,40 @@ public class PathUtilsTest {
 	}
 
 	/**
-	 * Test the constructor cannot be called.
-	 * 
-	 * @throws IllegalAccessException
+	 * Transform a Linux path to a Windows.
 	 */
-	@Test(expected = InvocationTargetException.class)
-	public void constructor() throws Exception {
+	@Test
+	public void osifyLinuxToWin() {
 
-		Constructor<?> co = PathUtils.class.getDeclaredConstructors()[0];
-		co.setAccessible(true);
+		PowerMockito.mockStatic(PathSeparator.class);
 
-		co.newInstance();
+		PowerMockito.when(PathSeparator.get()).thenReturn("\\");
+
+		PowerMockito.when(PathSeparator.migrate("\\")).thenReturn("/");
+
+		String osifyed = PathUtils.osify("/src/main/resources");
+
+		String expected = "\\src\\main\\resources";
+
+		Assert.assertEquals("Unexpected path from Linux to Windows.", expected,
+				osifyed);
+	}
+
+	/**
+	 * Transform a Linux path to a Linux.
+	 */
+	@Test
+	public void osifyWinToWin() {
+
+		PowerMockito.mockStatic(PathSeparator.class);
+
+		PowerMockito.when(PathSeparator.get()).thenReturn("\\");
+
+		String osifyed = PathUtils.osify("\\src\\main\\resources");
+
+		String expected = "\\src\\main\\resources";
+
+		Assert.assertEquals("Unexpected path from Linux to Linux.", expected,
+				osifyed);
 	}
 }

@@ -2,6 +2,7 @@ package com.github.easypack.jar;
 
 import org.codehaus.plexus.util.xml.Xpp3Dom;
 
+import com.github.easypack.io.PathSeparator;
 import com.github.easypack.io.PathUtils;
 
 /**
@@ -15,7 +16,7 @@ public class JarConfiguration {
 
 	private String includes = "";
 
-	private String excludes = "bin" + PathUtils.SEPARATOR + "**";
+	private String excludes = "bin" +  PathSeparator.get() + "**";
 
 	/**
 	 * Sets the list of regular expressions for including project resources in

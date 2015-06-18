@@ -20,6 +20,7 @@ import org.codehaus.plexus.util.FileUtils;
 
 import com.github.easypack.constants.FolderConstants;
 import com.github.easypack.io.IoFactory;
+import com.github.easypack.io.PathSeparator;
 import com.github.easypack.io.PathUtils;
 import com.github.easypack.platform.Platform;
 import com.github.easypack.script.PreStart;
@@ -37,7 +38,7 @@ public class CopyBinFilesMojo extends AbstractMojo {
 	/**
 	 * Regular expression for including any file in project bin folder.
 	 */
-	public static final String BIN_REGEX = "bin" + PathUtils.SEPARATOR + "*";
+	public static final String BIN_REGEX = "bin" +  PathSeparator.get() + "*";
 
 	@Component
 	private MavenProject project;
@@ -139,7 +140,7 @@ public class CopyBinFilesMojo extends AbstractMojo {
 
 		String relativePath = PathUtils.subtract(resource.getDirectory(),
 				this.project.getBasedir().getAbsolutePath()
-						+ PathUtils.SEPARATOR);
+						+  PathSeparator.get());
 
 		for (Platform platform : Platform.fromString(this.platforms)) {
 

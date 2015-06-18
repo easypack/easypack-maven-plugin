@@ -66,8 +66,8 @@ public class IoFactoryTest {
 
 		String folder = System.getProperty("java.io.tmpdir");
 
-		if (!folder.endsWith(PathUtils.SEPARATOR)) {
-			folder += PathUtils.SEPARATOR;
+		if (!folder.endsWith( PathSeparator.get())) {
+			folder +=  PathSeparator.get();
 		}
 
 		String[] paths = new String[] { "hello", "bye" };

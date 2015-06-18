@@ -1,9 +1,5 @@
 package com.github.easypack.io;
 
-import java.io.File;
-import java.util.HashMap;
-import java.util.Map;
-
 import org.apache.commons.lang.StringUtils;
 
 /**
@@ -13,21 +9,6 @@ import org.apache.commons.lang.StringUtils;
  * 
  */
 public final class PathUtils {
-
-	/**
-	 * The file system path separator.
-	 */
-	public static final String SEPARATOR = File.separator;
-
-	/**
-	 * Maps a OS separator to the 'opposite'.
-	 */
-	private static Map<String, String> SLASH_TRANSFORM = new HashMap<String, String>();
-
-	static {
-		SLASH_TRANSFORM.put("/", "\\");
-		SLASH_TRANSFORM.put("\\", "/");
-	}
 
 	private PathUtils() {
 		throw new IllegalAccessError("Constuctor cannot be called, "
@@ -44,7 +25,7 @@ public final class PathUtils {
 	 *         or an empty String if no name is passed.
 	 */
 	public static String path(String... names) {
-		return StringUtils.join(names, SEPARATOR);
+		return StringUtils.join(names, PathSeparator.get());
 	}
 
 	/**
@@ -97,10 +78,11 @@ public final class PathUtils {
 	 */
 	public static String osify(String path) {
 
-		if (path.contains(SEPARATOR)) {
+		if (path.contains(PathSeparator.get())) {
 			return path;
 		}
 
-		return path.replace(SLASH_TRANSFORM.get(SEPARATOR), SEPARATOR);
+		return path.replace(PathSeparator.migrate(PathSeparator.get()),
+				PathSeparator.get());
 	}
 }

@@ -1,5 +1,6 @@
 package com.github.easypack.script;
 
+import com.github.easypack.io.PathSeparator;
 import com.github.easypack.io.PathUtils;
 import com.github.easypack.platform.PlatformBehavioural;
 
@@ -12,7 +13,7 @@ import com.github.easypack.platform.PlatformBehavioural;
 public class PreStart implements PlatformBehavioural<String> {
 
 	private static final String BIN_FOLDER = PathUtils.path("src", "main",
-			"resources", "bin" + PathUtils.SEPARATOR);
+			"resources", "bin" +  PathSeparator.get());
 
 	public static final String DEFAULT_WINDOWS = BIN_FOLDER + "start-windows";
 

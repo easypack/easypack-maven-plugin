@@ -7,6 +7,7 @@ import org.codehaus.plexus.util.xml.Xpp3Dom;
 import org.junit.Assert;
 import org.junit.Test;
 
+import com.github.easypack.io.PathSeparator;
 import com.github.easypack.io.PathUtils;
 
 /**
@@ -38,7 +39,7 @@ public class JarConfigurationTest {
 		Assert.assertNotNull("No exclusions configured", excludes);
 
 		Assert.assertEquals("Incorrect exclusion of bin folder", "bin"
-				+ PathUtils.SEPARATOR + "**", excludes.getChild("exclude")
+				+  PathSeparator.get() + "**", excludes.getChild("exclude")
 				.getValue());
 	}
 
@@ -78,7 +79,7 @@ public class JarConfigurationTest {
 		Assert.assertNotNull("No exclusions configured", excludes);
 
 		Assert.assertEquals("Incorrect exclusion of bin folder.", "bin"
-				+ PathUtils.SEPARATOR + "**", excludes.getChild("exclude")
+				+  PathSeparator.get() + "**", excludes.getChild("exclude")
 				.getValue());
 
 	}

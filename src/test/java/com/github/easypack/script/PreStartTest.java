@@ -3,9 +3,8 @@ package com.github.easypack.script;
 import org.junit.Assert;
 import org.junit.Test;
 
-import com.github.easypack.io.PathUtils;
+import com.github.easypack.io.PathSeparator;
 import com.github.easypack.platform.Platform;
-import com.github.easypack.script.PreStart;
 
 /**
  * Unit test for {@link PreStart}.
@@ -39,9 +38,9 @@ public class PreStartTest {
 
 		PreStart preStart = new PreStart();
 
-		String expected = "src" + PathUtils.SEPARATOR + "main"
-				+ PathUtils.SEPARATOR + "resources" + PathUtils.SEPARATOR
-				+ "bin" + PathUtils.SEPARATOR + "linux";
+		String expected = "src" +  PathSeparator.get() + "main"
+				+  PathSeparator.get() + "resources" +  PathSeparator.get()
+				+ "bin" +  PathSeparator.get() + "linux";
 
 		preStart.setLinux(expected);
 
@@ -59,9 +58,9 @@ public class PreStartTest {
 
 		PreStart preStart = new PreStart();
 
-		String expected = "src" + PathUtils.SEPARATOR + "main"
-				+ PathUtils.SEPARATOR + "resources" + PathUtils.SEPARATOR
-				+ "bin" + PathUtils.SEPARATOR + "windows";
+		String expected = "src" +  PathSeparator.get() + "main"
+				+  PathSeparator.get() + "resources" +  PathSeparator.get()
+				+ "bin" +  PathSeparator.get() + "windows";
 
 		preStart.setWindows(expected);
 

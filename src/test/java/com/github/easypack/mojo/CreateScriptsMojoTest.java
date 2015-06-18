@@ -16,9 +16,8 @@ import org.powermock.modules.junit4.PowerMockRunner;
 import com.github.easypack.builder.MojoBuilder;
 import com.github.easypack.constants.FolderConstants;
 import com.github.easypack.io.IoFactory;
-import com.github.easypack.io.PathUtils;
+import com.github.easypack.io.PathSeparator;
 import com.github.easypack.mock.FileMock;
-import com.github.easypack.mojo.CreateScriptsMojo;
 import com.github.easypack.script.PreStart;
 import com.github.easypack.script.StartScriptWriter;
 
@@ -32,7 +31,7 @@ import com.github.easypack.script.StartScriptWriter;
 @PrepareForTest({ IoFactory.class, CreateScriptsMojo.class })
 public class CreateScriptsMojoTest {
 
-	private static final String TARGET = PathUtils.SEPARATOR + "target";
+	private static final String TARGET =  PathSeparator.get() + "target";
 
 	private CreateScriptsMojo mojo;
 
@@ -89,7 +88,7 @@ public class CreateScriptsMojoTest {
 			File binFolder = FileMock.mock(false);
 
 			PowerMockito.when(
-					IoFactory.file(TARGET + PathUtils.SEPARATOR
+					IoFactory.file(TARGET +  PathSeparator.get()
 							+ FolderConstants.BIN)).thenReturn(binFolder);
 
 			this.mojo.execute();
@@ -117,7 +116,7 @@ public class CreateScriptsMojoTest {
 			File binFolder = FileMock.mock(true);
 
 			PowerMockito.when(
-					IoFactory.file(TARGET + PathUtils.SEPARATOR
+					IoFactory.file(TARGET +  PathSeparator.get()
 							+ FolderConstants.BIN)).thenReturn(binFolder);
 
 			this.mojo.execute();
@@ -147,7 +146,7 @@ public class CreateScriptsMojoTest {
 		File binFolder = FileMock.mock();
 
 		PowerMockito.when(
-				IoFactory.file(TARGET + PathUtils.SEPARATOR
+				IoFactory.file(TARGET +  PathSeparator.get()
 						+ FolderConstants.BIN)).thenReturn(binFolder);
 
 		PowerMockito.when(this.writer.linux()).thenThrow(
