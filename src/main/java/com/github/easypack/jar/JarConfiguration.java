@@ -2,6 +2,8 @@ package com.github.easypack.jar;
 
 import org.codehaus.plexus.util.xml.Xpp3Dom;
 
+import com.github.easypack.io.PathUtils;
+
 /**
  * Configures the project final jar, like the resources to be included or
  * excluded.
@@ -13,7 +15,7 @@ public class JarConfiguration {
 
 	private String includes = "";
 
-	private String excludes = "bin/**";
+	private String excludes = "bin" + PathUtils.SEPARATOR + "**";
 
 	/**
 	 * Sets the list of regular expressions for including project resources in
@@ -86,7 +88,7 @@ public class JarConfiguration {
 		for (String value : values) {
 
 			Xpp3Dom domChild = new Xpp3Dom(child);
-			domChild.setValue(value.trim());
+			domChild.setValue(PathUtils.osify(value.trim()));
 			domElement.addChild(domChild);
 
 		}

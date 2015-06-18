@@ -7,7 +7,7 @@ import org.codehaus.plexus.util.xml.Xpp3Dom;
 import org.junit.Assert;
 import org.junit.Test;
 
-import com.github.easypack.jar.JarConfiguration;
+import com.github.easypack.io.PathUtils;
 
 /**
  * Unit test for {@link JarConfiguration}.
@@ -37,8 +37,9 @@ public class JarConfigurationTest {
 
 		Assert.assertNotNull("No exclusions configured", excludes);
 
-		Assert.assertEquals("Incorrect exclusion of bin folder", "bin/**",
-				excludes.getChild("exclude").getValue());
+		Assert.assertEquals("Incorrect exclusion of bin folder", "bin"
+				+ PathUtils.SEPARATOR + "**", excludes.getChild("exclude")
+				.getValue());
 	}
 
 	/**
@@ -59,8 +60,9 @@ public class JarConfigurationTest {
 
 		Assert.assertNotNull("No inclusions configured", includes);
 
-		Collection<String> values = Arrays.asList("files/afile.txt",
-				"classes/**");
+		Collection<String> values = Arrays.asList(
+				PathUtils.osify("files/afile.txt"),
+				PathUtils.osify("classes/**"));
 
 		Assert.assertEquals("Incorrect amount of includes", values.size(),
 				includes.getChildCount());
@@ -75,8 +77,9 @@ public class JarConfigurationTest {
 
 		Assert.assertNotNull("No exclusions configured", excludes);
 
-		Assert.assertEquals("Incorrect exclusion of bin folder.", "bin/**",
-				excludes.getChild("exclude").getValue());
+		Assert.assertEquals("Incorrect exclusion of bin folder.", "bin"
+				+ PathUtils.SEPARATOR + "**", excludes.getChild("exclude")
+				.getValue());
 
 	}
 
@@ -101,8 +104,9 @@ public class JarConfigurationTest {
 
 		Assert.assertNotNull("No exclusions configured", excludes);
 
-		Collection<String> values = Arrays.asList("bin/**", "files/afile.txt",
-				"classes/**");
+		Collection<String> values = Arrays.asList(PathUtils.osify("bin/**"),
+				PathUtils.osify("files/afile.txt"),
+				PathUtils.osify("classes/**"));
 
 		Assert.assertEquals("Incorrect amount of exclusions", values.size(),
 				excludes.getChildCount());
