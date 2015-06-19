@@ -16,7 +16,7 @@ public class JarConfiguration {
 
 	private String includes = "";
 
-	private String excludes = "bin" +  PathSeparator.get() + "**";
+	private String excludes = "bin" + PathSeparator.get() + "**";
 
 	/**
 	 * Sets the list of regular expressions for including project resources in
@@ -38,9 +38,7 @@ public class JarConfiguration {
 	 */
 	public void setExcludes(String excludes) {
 
-		if (excludes != null && !excludes.isEmpty()) {
-			this.excludes += "," + excludes;
-		}
+		this.excludes += "," + excludes;
 	}
 
 	/**
@@ -78,11 +76,11 @@ public class JarConfiguration {
 	private void add(Xpp3Dom configuration, String element, String child,
 			String resources) {
 
-		String[] values = resources.split(",");
-
-		if (resources.isEmpty() || values.length == 0) {
+		if (resources.isEmpty()) {
 			return;
 		}
+
+		String[] values = resources.split(",");
 
 		Xpp3Dom domElement = new Xpp3Dom(element);
 

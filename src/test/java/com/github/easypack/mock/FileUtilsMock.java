@@ -12,7 +12,7 @@ import org.powermock.api.mockito.PowerMockito;
  * Utility class for mocking {@link FileUtils}.
  * 
  * @author agusmunioz
- *
+ * 
  */
 public class FileUtilsMock {
 
@@ -80,6 +80,40 @@ public class FileUtilsMock {
 		} catch (IOException e) {
 			// Won't happen. Mock side effect.
 		}
+	}
+
+	/**
+	 * Mocks the method {@link FileUtils#getFiles(File, String, String)} to
+	 * throw an I/O exception.
+	 */
+	public static void getFilesIOException() {
+
+		try {
+			PowerMockito.when(
+					FileUtils.getFiles(Mockito.any(File.class),
+							Mockito.any(String.class),
+							Mockito.any(String.class))).thenThrow(
+					new IOException());
+		} catch (IOException e1) {
+			// Won't happen. Mock side effect.
+		}
+
+	}
+
+	/**
+	 * Mocks the method {@link FileUtils#copyFileToDirectory(File, File)} to
+	 * throw an I/O exception.
+	 */
+	public static void copyToDirectoryIOException() {
+
+		try {
+			PowerMockito.doThrow(new IOException()).when(FileUtils.class);
+			FileUtils.copyFileToDirectory(Mockito.isA(File.class),
+					Mockito.isA(File.class));
+		} catch (IOException e1) {
+			// Won't happen. Mock side effect.
+		}
+
 	}
 
 }

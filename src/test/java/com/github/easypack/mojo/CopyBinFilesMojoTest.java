@@ -26,13 +26,12 @@ import com.github.easypack.constants.FolderConstants;
 import com.github.easypack.io.IoFactory;
 import com.github.easypack.mock.FileMock;
 import com.github.easypack.mock.FileUtilsMock;
-import com.github.easypack.mojo.CopyBinFilesMojo;
 
 /**
  * Unit test for {@link CopyBinFilesMojo}.
  * 
  * @author agusmunioz
- *
+ * 
  */
 @RunWith(PowerMockRunner.class)
 @PrepareForTest({ IoFactory.class, FileUtils.class })
@@ -55,9 +54,6 @@ public class CopyBinFilesMojoTest {
 		this.project = MavenProjectBuilder.dummy();
 
 		PowerMockito.mockStatic(FileUtils.class);
-
-		PowerMockito.when(FileUtils.fileExists(Mockito.anyString()))
-				.thenReturn(true);
 
 		PowerMockito.mockStatic(IoFactory.class);
 
@@ -82,6 +78,9 @@ public class CopyBinFilesMojoTest {
 	 */
 	@Test
 	public void defaultConfiguration() {
+
+		PowerMockito.when(FileUtils.fileExists(Mockito.anyString()))
+				.thenReturn(true);
 
 		List<File> files = new LinkedList<File>();
 
@@ -114,6 +113,9 @@ public class CopyBinFilesMojoTest {
 	 */
 	@Test
 	public void filesInBinFolder() {
+
+		PowerMockito.when(FileUtils.fileExists(Mockito.anyString()))
+				.thenReturn(true);
 
 		CopyBinFilesMojo mojo = (CopyBinFilesMojo) MojoBuilder
 				.build(new CopyBinFilesMojo())
@@ -151,6 +153,9 @@ public class CopyBinFilesMojoTest {
 	@Test
 	public void includes() {
 
+		PowerMockito.when(FileUtils.fileExists(Mockito.anyString()))
+				.thenReturn(true);
+
 		String[] includes = new String[] { "scripts/hola.sh", "tests/" };
 
 		CopyBinFilesMojo mojo = (CopyBinFilesMojo) MojoBuilder
@@ -183,6 +188,102 @@ public class CopyBinFilesMojoTest {
 
 			Assert.fail("Unexpected exception. " + e);
 
+		}
+	}
+
+	/**
+	 * Test when the resouce folder is configured but doesn't exists.
+	 */
+	@Test
+	public void directoryNotExists() {
+
+		PowerMockito.when(FileUtils.fileExists(Mockito.anyString()))
+				.thenReturn(false);
+
+		CopyBinFilesMojo mojo = (CopyBinFilesMojo) MojoBuilder
+				.build(new CopyBinFilesMojo())
+				.with(project)
+				.with("outputDirectory",
+						project.getBuild().getOutputDirectory())
+				.with("platforms", "linux,windows").with("echo", "").get();
+
+		try {
+
+			mojo.execute();
+
+			FileUtilsMock.verifyNoFilesCopied();
+
+		} catch (MojoExecutionException | MojoFailureException e) {
+
+			Assert.fail("Unexpected exception. " + e);
+
+		}
+	}
+
+	/**
+	 * Test when copying files throws an I/O exception.
+	 * 
+	 * @throws MojoExecutionException
+	 *             expected.
+	 */
+	@Test(expected = MojoExecutionException.class)
+	public void copyIoException() throws MojoExecutionException {
+
+		PowerMockito.when(FileUtils.fileExists(Mockito.anyString()))
+				.thenReturn(true);
+
+		List<File> files = Arrays.asList(new File(
+				"src/main/resources/bin/hola.sh"), new File(
+				"src/main/resources/bin/chau.sh"));
+
+		FileUtilsMock.getFiles(this.resourceFolder, CopyBinFilesMojo.BIN_REGEX,
+				EXCLUSIONS, files);
+
+		FileUtilsMock.copyToDirectoryIOException();
+		
+		CopyBinFilesMojo mojo = (CopyBinFilesMojo) MojoBuilder
+				.build(new CopyBinFilesMojo())
+				.with(project)
+				.with("outputDirectory",
+						project.getBuild().getOutputDirectory())
+				.with("platforms", "linux,windows").with("echo", "").get();
+
+		try {
+
+			mojo.execute();
+
+		} catch (MojoFailureException e) {
+			Assert.fail("Unexpected exception. " + e);
+		}
+	}
+
+	/**
+	 * Test when the filtering of files throws an I/O exception.
+	 * 
+	 * @throws MojoExecutionException
+	 *             expected.
+	 */
+	@Test(expected = MojoExecutionException.class)
+	public void getFileIoException() throws MojoExecutionException {
+
+		PowerMockito.when(FileUtils.fileExists(Mockito.anyString()))
+				.thenReturn(true);
+
+		FileUtilsMock.getFilesIOException();
+
+		CopyBinFilesMojo mojo = (CopyBinFilesMojo) MojoBuilder
+				.build(new CopyBinFilesMojo())
+				.with(project)
+				.with("outputDirectory",
+						project.getBuild().getOutputDirectory())
+				.with("platforms", "linux,windows").with("echo", "").get();
+
+		try {
+
+			mojo.execute();
+
+		} catch (MojoFailureException e) {
+			Assert.fail("Unexpected exception. " + e);
 		}
 	}
 }

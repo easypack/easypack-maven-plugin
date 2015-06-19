@@ -17,7 +17,7 @@ import org.junit.Test;
  * Unit test for {@link IoFactory}.
  * 
  * @author agusmunioz
- *
+ * 
  */
 public class IoFactoryTest {
 
@@ -59,15 +59,16 @@ public class IoFactoryTest {
 	}
 
 	/**
-	 * Test the creation of an array of files.
+	 * Test the creation of an array of files with a folder path ending in
+	 * slash.
 	 */
 	@Test
-	public void files() {
+	public void filesEndingSlash() {
 
 		String folder = System.getProperty("java.io.tmpdir");
 
-		if (!folder.endsWith( PathSeparator.get())) {
-			folder +=  PathSeparator.get();
+		if (!folder.endsWith(PathSeparator.get())) {
+			folder += PathSeparator.get();
 		}
 
 		String[] paths = new String[] { "hello", "bye" };
@@ -88,6 +89,40 @@ public class IoFactoryTest {
 			Assert.assertTrue("Unexpected file created", created);
 		}
 
+	}
+
+	/**
+	 * Test the creation of an array of files with a folder path not ending in
+	 * slash.
+	 */
+	@Test
+	public void filesNotEndingSlash() {
+
+		String folder = System.getProperty("java.io.tmpdir");
+
+		if (folder.endsWith(PathSeparator.get())) {
+			folder = folder.substring(0, folder.length() - 1);
+		}
+
+		String[] paths = new String[] { "hello", "bye" };
+
+		File[] files = IoFactory.files(folder, paths);
+
+		Assert.assertEquals("Unexpected amount of created files", paths.length,
+				files.length);
+
+		for (File file : files) {
+
+			boolean created = false;
+
+			for (String path : paths) {
+				created = created
+						|| (file.getPath().equals(folder + PathSeparator.get()
+								+ path));
+			}
+
+			Assert.assertTrue("Unexpected file created", created);
+		}
 	}
 
 	/**

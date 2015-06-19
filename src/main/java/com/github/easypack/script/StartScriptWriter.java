@@ -98,7 +98,7 @@ public class StartScriptWriter implements PlatformBehavioural<Void> {
 
 		} catch (IOException e) {
 
-			throw new RuntimeException(
+			throw new ScriptException(
 					"Un error occurred while creating the start scrtip.", e);
 		}
 

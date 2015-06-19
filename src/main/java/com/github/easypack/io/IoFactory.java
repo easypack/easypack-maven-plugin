@@ -50,8 +50,8 @@ public class IoFactory {
 
 		String root = directory;
 
-		if (!root.endsWith(File.separator)) {
-			root += File.separator;
+		if (!root.endsWith(PathSeparator.get())) {
+			root += PathSeparator.get();
 		}
 
 		for (int i = 0; i < paths.length; i++) {

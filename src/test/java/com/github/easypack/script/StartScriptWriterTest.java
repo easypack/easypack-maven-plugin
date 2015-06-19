@@ -131,6 +131,41 @@ public class StartScriptWriterTest {
 	}
 
 	/**
+	 * Test when there is an IOexception when creating the writer.
+	 * 
+	 * @throws IOException
+	 *             won't happen mock side effect.
+	 */
+	@Test(expected = ScriptException.class)
+	public void ioExceptionInWriter() throws IOException {
+
+		PowerMockito.when(
+				IoFactory.writer(Mockito.isA(File.class),
+						Mockito.isA(String.class)))
+				.thenThrow(new IOException());
+
+		this.scriptWriter.linux();
+	}
+
+	/**
+	 * Test when there is an IOexception when getting the pre-start script
+	 * content.
+	 * 
+	 * @throws IOException
+	 *             won't happen mock side effect.
+	 */
+	@Test(expected = ScriptException.class)
+	public void ioExceptionInContent() throws IOException {
+
+		PowerMockito.mockStatic(FileContent.class);
+
+		PowerMockito.when(FileContent.get(Mockito.anyString())).thenThrow(
+				new IOException());
+
+		this.scriptWriter.linux();
+	}
+
+	/**
 	 * Compares the generated start script with the expected one for all
 	 * platforms.
 	 * 
