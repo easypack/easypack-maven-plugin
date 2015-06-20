@@ -8,7 +8,7 @@ import org.apache.maven.plugin.AbstractMojo;
  * It helps to build and configure a Mojo.
  * 
  * @author agusmunioz
- *
+ * 
  */
 public class MojoBuilder {
 
@@ -50,23 +50,7 @@ public class MojoBuilder {
 	 */
 	public MojoBuilder with(Object object) {
 
-		for (Field field : this.mojo.getClass().getDeclaredFields()) {
-
-			if (field.getType().isAssignableFrom(object.getClass())) {
-
-				field.setAccessible(true);
-
-				try {
-
-					field.set(this.mojo, object);
-					return this;
-
-				} catch (Exception e) {
-					return this;
-				}
-
-			}
-		}
+		this.setField(this.getField(object.getClass()), object);
 
 		return this;
 	}
@@ -76,22 +60,99 @@ public class MojoBuilder {
 	 * 
 	 * @param name
 	 *            the field name.
-	 *            
+	 * 
 	 * @param value
 	 *            the field value.
-	 *            
+	 * 
 	 * @return the builder.s
 	 */
 	public MojoBuilder with(String name, Object value) {
 
+		this.setField(this.getField(name), value);
+
+		return this;
+	}
+
+	/**
+	 * Searches a field recursively.
+	 * 
+	 * @param name
+	 *            the field name.
+	 * 
+	 * @return the field or null if not found.
+	 */
+	private Field getField(String name) {
+
+		Class<?> type = this.mojo.getClass();
+
+		while (!type.equals(Object.class)) {
+
+			try {
+
+				Field field = type.getDeclaredField(name);
+
+				if (field != null) {
+					return field;
+				}
+
+			} catch (NoSuchFieldException | SecurityException e) {
+
+			}
+
+			type = type.getSuperclass();
+
+		}
+
+		return null;
+	}
+
+	/**
+	 * Searches a field recursively.
+	 * 
+	 * @param name
+	 *            the field name.
+	 * 
+	 * @return the field or null if not found.
+	 */
+	private Field getField(Class<?> fieldType) {
+
+		Class<?> type = this.mojo.getClass();
+
+		while (!type.equals(Object.class)) {
+
+			Field[] fields = type.getDeclaredFields();
+
+			for (Field field : fields) {
+
+				if (field.getType().equals(fieldType)) {
+					return field;
+				}
+			}
+
+			type = type.getSuperclass();
+
+		}
+
+		return null;
+	}
+
+	/**
+	 * Sets the field value.
+	 * 
+	 * @param field
+	 *            the field.
+	 * @param value
+	 *            the value.
+	 */
+	private void setField(Field field, Object value) {
+
 		try {
 
-			Field field = this.mojo.getClass().getDeclaredField(name);
 			field.setAccessible(true);
 			field.set(this.mojo, value);
 
 		} catch (Exception e) {
 		}
-		return this;
+
 	}
 }

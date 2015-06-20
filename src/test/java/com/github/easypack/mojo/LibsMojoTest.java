@@ -20,7 +20,6 @@ import com.github.easypack.builder.MavenPluginBuilder;
 import com.github.easypack.builder.MavenProjectBuilder;
 import com.github.easypack.builder.MojoBuilder;
 import com.github.easypack.jar.JarConfiguration;
-import com.github.easypack.mojo.LibsMojo;
 
 /**
  * Unit test for {@link LibsMojo}.
@@ -29,7 +28,7 @@ import com.github.easypack.mojo.LibsMojo;
  * 
  */
 @RunWith(PowerMockRunner.class)
-@PrepareForTest(MojoExecutor.class)
+@PrepareForTest({ MojoExecutor.class })
 public class LibsMojoTest {
 
 	/**
@@ -51,11 +50,16 @@ public class LibsMojoTest {
 		JarConfiguration jarManger = Mockito.mock(JarConfiguration.class);
 
 		LibsMojo mojo = (LibsMojo) MojoBuilder.build(new LibsMojo())
-				.with(project).with(session).with(pluginManager)
+				.with(project).with("session", session)
+				.with("pluginManager", pluginManager)
 				.with("mainClass", "org.easypack.test.start.Start")
-				.with(jarManger).get();
+				.with("jarConfiguration", jarManger).get();
 
 		PowerMockito.mockStatic(MojoExecutor.class);
+
+		PowerMockito.when(
+				MojoExecutor.executionEnvironment(project, session,
+						pluginManager)).thenReturn(environment);
 
 		Plugin dependency = MavenPluginBuilder.dependency();
 
@@ -109,9 +113,10 @@ public class LibsMojoTest {
 		JarConfiguration jarManger = Mockito.mock(JarConfiguration.class);
 
 		LibsMojo mojo = (LibsMojo) MojoBuilder.build(new LibsMojo())
-				.with(project).with(session).with(pluginManager)
+				.with(project).with("session", session)
+				.with("pluginManager", pluginManager)
 				.with("mainClass", "org.easypack.test.start.Start")
-				.with(jarManger).get();
+				.with("jarConfiguration", jarManger).get();
 
 		PowerMockito.mockStatic(MojoExecutor.class);
 
@@ -152,9 +157,10 @@ public class LibsMojoTest {
 		JarConfiguration jarManger = Mockito.mock(JarConfiguration.class);
 
 		LibsMojo mojo = (LibsMojo) MojoBuilder.build(new LibsMojo())
-				.with(project).with(session).with(pluginManager)
+				.with(project).with("session", session)
+				.with("pluginManager", pluginManager)
 				.with("mainClass", "org.easypack.test.start.Start")
-				.with(jarManger).get();
+				.with("jarConfiguration", jarManger).get();
 
 		PowerMockito.mockStatic(MojoExecutor.class);
 
