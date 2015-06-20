@@ -28,6 +28,7 @@ public class AssertPackaging {
 	static {
 		EXPECTED_FILES.add("/bin/hola.sh");
 		EXPECTED_FILES.add("/bin/chau.sh");
+		EXPECTED_FILES.add("/bin/start.sh");
 		EXPECTED_FILES.add("/libs/dependency.jar");
 	}
 

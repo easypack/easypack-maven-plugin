@@ -117,6 +117,16 @@ public class MavenProjectBuilder {
 			}
 		}
 
+		File bash = new File(binFolder, "start.sh");
+		
+		try {
+			FileUtils.touch(bash);
+			FileUtils.write(bash, "#!/bin/bash");
+		} catch (IOException e) {
+			throw new RuntimeException(e);
+		}
+		
+		
 		File libsFolder = new File(target, "libs");
 		libsFolder.mkdir();
 
