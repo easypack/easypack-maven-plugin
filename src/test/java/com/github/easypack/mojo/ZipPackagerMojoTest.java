@@ -2,6 +2,7 @@ package com.github.easypack.mojo;
 
 import java.io.File;
 
+import org.apache.commons.compress.archivers.ArchiveStreamFactory;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.project.MavenProject;
@@ -39,7 +40,7 @@ public class ZipPackagerMojoTest {
 
 			mojo.execute();
 
-			AssertPackaging.assertPackaged(project);
+			AssertPackaging.assertPackaged(project, ArchiveStreamFactory.ZIP);
 
 		} catch (MojoExecutionException | MojoFailureException e) {
 			Assert.fail("Unexpected exception " + e);
@@ -71,7 +72,7 @@ public class ZipPackagerMojoTest {
 
 			mojo.execute();
 
-			AssertPackaging.assertPackaged(project);
+			AssertPackaging.assertPackaged(project, ArchiveStreamFactory.ZIP);
 
 		} catch (MojoFailureException e) {
 			Assert.fail("Unexpected exception " + e);

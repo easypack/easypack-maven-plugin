@@ -2,7 +2,6 @@ package com.github.easypack.mojo;
 
 import java.io.File;
 
-import org.apache.commons.compress.archivers.ArchiveStreamFactory;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.project.MavenProject;
@@ -14,12 +13,12 @@ import com.github.easypack.builder.MavenProjectBuilder;
 import com.github.easypack.builder.MojoBuilder;
 
 /**
- * Unit test for {@link TarPackagerMojo}.
+ * Unit test for {@link TarGzPackagerMojo}.
  * 
  * @author agusmunioz
  * 
  */
-public class TarPackagerMojoTest {
+public class TarGzPackagerMojoTest {
 
 	/**
 	 * Test a successful packagin of a project.
@@ -29,8 +28,8 @@ public class TarPackagerMojoTest {
 
 		MavenProject project = MavenProjectBuilder.tmpProject();
 
-		TarPackagerMojo mojo = (TarPackagerMojo) MojoBuilder
-				.build(new TarPackagerMojo())
+		TarGzPackagerMojo mojo = (TarGzPackagerMojo) MojoBuilder
+				.build(new TarGzPackagerMojo())
 				.with(project)
 				.with("outputDirectory",
 						project.getBuild().getOutputDirectory())
@@ -40,7 +39,7 @@ public class TarPackagerMojoTest {
 
 			mojo.execute();
 
-			AssertPackaging.assertPackaged(project, ArchiveStreamFactory.TAR);
+			AssertPackaging.assertPackaged(project, "GZip");
 
 		} catch (MojoExecutionException | MojoFailureException e) {
 			Assert.fail("Unexpected exception " + e);
@@ -59,8 +58,8 @@ public class TarPackagerMojoTest {
 
 		MavenProject project = MavenProjectBuilder.tmpProject();
 
-		TarPackagerMojo mojo = (TarPackagerMojo) MojoBuilder
-				.build(new TarPackagerMojo())
+		TarGzPackagerMojo mojo = (TarGzPackagerMojo) MojoBuilder
+				.build(new TarGzPackagerMojo())
 				.with(project)
 				.with("outputDirectory",
 						project.getBuild().getOutputDirectory())
@@ -72,7 +71,7 @@ public class TarPackagerMojoTest {
 
 			mojo.execute();
 
-			AssertPackaging.assertPackaged(project, ArchiveStreamFactory.TAR);
+			AssertPackaging.assertPackaged(project, "GZip");
 
 		} catch (MojoFailureException e) {
 			Assert.fail("Unexpected exception " + e);
