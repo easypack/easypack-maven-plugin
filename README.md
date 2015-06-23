@@ -10,20 +10,20 @@ The pom will look like:
               <groupId>com.my-company</groupId>
               <artifactId>my-app</artifactId>
               <version>1.0-SNAPSHOT<version>
-              <packaing> jtar </packaging>
+              <packaging> jtar </packaging>
 ```                                
 ``` xml                            
               <groupId>com.my-company</groupId>
               <artifactId>my-app</artifactId>
               <version>1.0-SNAPSHOT<version>
-              <packaing> jzip </packaging>
+              <packaging> jzip </packaging>
 ```  
 
 ``` xml                            
               <groupId>com.my-company</groupId>
               <artifactId>my-app</artifactId>
               <version>1.0-SNAPSHOT<version>
-              <packaing> jtargz </packaging>
+              <packaging> jtargz </packaging>
 ```  
 
 ### Features
