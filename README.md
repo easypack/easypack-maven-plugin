@@ -41,7 +41,8 @@ In the [Usage](https://github.com/easypack/easypack-maven-plugin/wiki/Usage) pag
 
 ### Not yet released but
 
-We are testing the plugin in order to release a stable version. But if you want to try it, and help us testing meanwhile, there is a beta version that can be used.
+We are testing the plugin in order to release a stable version. But if you want to try it, and help us testing meanwhile, there is a beta version that can be used. The plugin is available at [Mave Central Repository](http://repo1.maven.org/maven2/com/github/easypack/) so no extra repository configuration is required.
+
 
 ``` xml
      <groupId>com.github.easypack</groupId>
