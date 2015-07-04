@@ -41,25 +41,12 @@ In the [Usage](https://github.com/easypack/easypack-maven-plugin/wiki/Usage) pag
 
 ### Not yet released but
 
-We are testing the plugin in order to release a stable version. But if you want to try it, and help us testing meanwhile, there is a snapshot version that can be used.
-
-First configure the repository:
-
-``` xml
-    <pluginRepositories>
-		   <pluginRepository>
-			    <id>ossrh</id>
-			    <url>https://oss.sonatype.org/content/groups/public</url>
-		   </pluginRepository>
-	  </pluginRepositories>
-```
-
-Then use the version 1.0-SNAPSHOT
+We are testing the plugin in order to release a stable version. But if you want to try it, and help us testing meanwhile, there is a beta version that can be used.
 
 ``` xml
      <groupId>com.github.easypack</groupId>
      <artifactId>easypack-maven-plugin</artifactId>
-     <version>1.0-SNAPSHOT</version>
+     <version>1.0.BETA</version>
      <extensions>true</extensions>
 ```
 
