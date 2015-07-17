@@ -1,12 +1,9 @@
 package com.github.easypack.script;
 
 import java.io.File;
-import java.io.FileReader;
 import java.io.IOException;
 import java.io.Writer;
-import java.net.URISyntaxException;
 
-import org.apache.commons.io.IOUtils;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -20,6 +17,7 @@ import com.github.easypack.io.FileContent;
 import com.github.easypack.io.IoFactory;
 import com.github.easypack.mock.FileWriterMock;
 import com.github.easypack.platform.Platform;
+import com.github.easypack.test.utils.ScriptTestReader;
 
 /**
  * Unit test for {@link StartScriptWriter}.
@@ -49,7 +47,7 @@ public class StartScriptWriterTest {
 		this.preStart = new PreStart();
 
 		this.scriptWriter.args("").folder(folder).jar("my-project").opts("")
-				.preStart(preStart);
+				.process("my-project").preStart(preStart);
 
 		PowerMockito.mockStatic(IoFactory.class);
 
@@ -181,19 +179,20 @@ public class StartScriptWriterTest {
 
 		for (Platform platform : Platform.values()) {
 
-			String expected = this.content(platform, postFix);
+			try {
+				
+				Mockito.when(FileContent.get(platform.behave(this.preStart)))
+				.thenReturn(preStartContent);
+				
+			} catch (IOException e) {
+				// Won't happen is a mock side effect.
+				
+			}
+
+			String expected = ScriptTestReader.content("start-"+ platform, postFix);
 
 			Writer writer = FileWriterMock.mock();
 
-			try {
-
-				Mockito.when(FileContent.get(platform.behave(this.preStart)))
-						.thenReturn(preStartContent);
-
-			} catch (IOException e) {
-				// Won't happen is a mock side effect.
-
-			}
 
 			platform.behave(this.scriptWriter);
 
@@ -203,38 +202,5 @@ public class StartScriptWriterTest {
 
 	}
 
-	/**
-	 * 
-	 * Gets the script example content.
-	 * 
-	 * @param platform
-	 *            the platform of the expected script.
-	 * 
-	 * @param postFix
-	 *            the last part of the file name with the expected content (
-	 *            /org/easypack/script/test-{platform}-'postFix').
-	 * 
-	 * @return the content.
-	 * 
-	 * @throws RuntimeException
-	 *             if there is an error when getting the file content.
-	 */
-	private String content(Platform platform, String postFix) {
-
-		try {
-
-			File script = new File(this
-					.getClass()
-					.getResource(
-							"/com/github/easypack/script/test-"
-									+ platform.name().toLowerCase() + "-"
-									+ postFix).toURI());
-
-			return IOUtils.toString(new FileReader(script));
-
-		} catch (URISyntaxException | IOException e) {
-			throw new RuntimeException(e);
-		}
-
-	}
+	
 }

@@ -2,6 +2,8 @@
 
 cd `dirname $0`/..
 
+COMMAND="java $JAVA_OPTS -jar libs/my-project.jar $JAVA_ARGS"
+
 set -x
 
-java $JAVA_OPTS -jar libs/my-project.jar $JAVA_ARGS
+exec -a "my-project" $COMMAND

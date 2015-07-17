@@ -4,4 +4,6 @@ cd `dirname $0`/..
 
 echo 'Hola'
  
-java $JAVA_OPTS -jar libs/my-project.jar $JAVA_ARGS
+COMMAND="java $JAVA_OPTS -jar libs/my-project.jar $JAVA_ARGS"
+
+exec -a "my-project" $COMMAND

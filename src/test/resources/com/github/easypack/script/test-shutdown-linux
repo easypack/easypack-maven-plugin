@@ -1,0 +1,5 @@
+#!/bin/bash
+
+APP_PID=`ps -ef | grep my-app | grep -v grep | awk '{ print $2 }'`
+
+kill -SIGTERM $APP_PID

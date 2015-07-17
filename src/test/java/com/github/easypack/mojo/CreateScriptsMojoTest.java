@@ -19,6 +19,7 @@ import com.github.easypack.io.IoFactory;
 import com.github.easypack.io.PathSeparator;
 import com.github.easypack.mock.FileMock;
 import com.github.easypack.script.PreStart;
+import com.github.easypack.script.ShutdownScriptWriter;
 import com.github.easypack.script.StartScriptWriter;
 
 /**
@@ -28,14 +29,17 @@ import com.github.easypack.script.StartScriptWriter;
  * 
  */
 @RunWith(PowerMockRunner.class)
-@PrepareForTest({ IoFactory.class, CreateScriptsMojo.class })
+@PrepareForTest({ IoFactory.class, CreateScriptsMojo.class,
+		ShutdownScriptWriter.class })
 public class CreateScriptsMojoTest {
 
-	private static final String TARGET =  PathSeparator.get() + "target";
+	private static final String TARGET = PathSeparator.get() + "target";
 
 	private CreateScriptsMojo mojo;
 
-	private StartScriptWriter writer;
+	private StartScriptWriter start;
+
+	private ShutdownScriptWriter shutdown;
 
 	/**
 	 * Initializes each test with common mocking.
@@ -52,29 +56,42 @@ public class CreateScriptsMojoTest {
 				.with("finalName", "myProject")
 				.with("platforms", "linux,windows").with("echo", "").get();
 
-		this.writer = PowerMockito.mock(StartScriptWriter.class);
+		this.start = PowerMockito.mock(StartScriptWriter.class);
 
 		PowerMockito.whenNew(StartScriptWriter.class).withNoArguments()
-				.thenReturn(this.writer);
+				.thenReturn(this.start);
 
-		PowerMockito.when(this.writer.args(Mockito.anyString())).thenReturn(
-				this.writer);
+		PowerMockito.when(this.start.args(Mockito.anyString())).thenReturn(
+				this.start);
 
-		PowerMockito.when(this.writer.opts(Mockito.anyString())).thenReturn(
-				this.writer);
+		PowerMockito.when(this.start.opts(Mockito.anyString())).thenReturn(
+				this.start);
 
-		PowerMockito.when(this.writer.echo(Mockito.anyString())).thenReturn(
-				this.writer);
+		PowerMockito.when(this.start.echo(Mockito.anyString())).thenReturn(
+				this.start);
 
-		PowerMockito.when(this.writer.jar(Mockito.anyString())).thenReturn(
-				this.writer);
+		PowerMockito.when(this.start.jar(Mockito.anyString())).thenReturn(
+				this.start);
 
-		PowerMockito.when(this.writer.folder(Mockito.any(File.class)))
-				.thenReturn(this.writer);
+		PowerMockito.when(this.start.folder(Mockito.any(File.class)))
+				.thenReturn(this.start);
 
-		PowerMockito.when(this.writer.preStart(Mockito.any(PreStart.class)))
-				.thenReturn(this.writer);
+		PowerMockito.when(this.start.process(Mockito.anyString())).thenReturn(
+				this.start);
 
+		PowerMockito.when(this.start.preStart(Mockito.any(PreStart.class)))
+				.thenReturn(this.start);
+
+		this.shutdown = PowerMockito.mock(ShutdownScriptWriter.class);
+
+		PowerMockito.whenNew(ShutdownScriptWriter.class).withNoArguments()
+				.thenReturn(this.shutdown);
+
+		PowerMockito.when(this.shutdown.process(Mockito.anyString()))
+				.thenReturn(this.shutdown);
+
+		PowerMockito.when(this.shutdown.folder(Mockito.any(File.class)))
+				.thenReturn(this.shutdown);
 	}
 
 	/**
@@ -88,7 +105,7 @@ public class CreateScriptsMojoTest {
 			File binFolder = FileMock.mock(false);
 
 			PowerMockito.when(
-					IoFactory.file(TARGET +  PathSeparator.get()
+					IoFactory.file(TARGET + PathSeparator.get()
 							+ FolderConstants.BIN)).thenReturn(binFolder);
 
 			this.mojo.execute();
@@ -116,7 +133,7 @@ public class CreateScriptsMojoTest {
 			File binFolder = FileMock.mock(true);
 
 			PowerMockito.when(
-					IoFactory.file(TARGET +  PathSeparator.get()
+					IoFactory.file(TARGET + PathSeparator.get()
 							+ FolderConstants.BIN)).thenReturn(binFolder);
 
 			this.mojo.execute();
@@ -146,10 +163,10 @@ public class CreateScriptsMojoTest {
 		File binFolder = FileMock.mock();
 
 		PowerMockito.when(
-				IoFactory.file(TARGET +  PathSeparator.get()
+				IoFactory.file(TARGET + PathSeparator.get()
 						+ FolderConstants.BIN)).thenReturn(binFolder);
 
-		PowerMockito.when(this.writer.linux()).thenThrow(
+		PowerMockito.when(this.start.linux()).thenThrow(
 				new RuntimeException(""));
 
 		this.mojo.execute();
@@ -161,8 +178,12 @@ public class CreateScriptsMojoTest {
 	 */
 	private void verifyWriter() {
 
-		Mockito.verify(this.writer, Mockito.times(1)).linux();
+		Mockito.verify(this.start, Mockito.times(1)).linux();
 
-		Mockito.verify(this.writer, Mockito.times(1)).windows();
+		Mockito.verify(this.start, Mockito.times(1)).windows();
+		
+		Mockito.verify(this.shutdown, Mockito.times(1)).linux();
+
+		Mockito.verify(this.shutdown, Mockito.times(1)).windows();
 	}
 }

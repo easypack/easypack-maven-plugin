@@ -1,6 +1,8 @@
 package com.github.easypack.mojo;
 
 import java.io.File;
+import java.util.Arrays;
+import java.util.Collection;
 
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
@@ -12,7 +14,9 @@ import com.github.easypack.constants.FolderConstants;
 import com.github.easypack.io.IoFactory;
 import com.github.easypack.io.PathUtils;
 import com.github.easypack.platform.Platform;
+import com.github.easypack.platform.PlatformBehavioural;
 import com.github.easypack.script.PreStart;
+import com.github.easypack.script.ShutdownScriptWriter;
 import com.github.easypack.script.StartScriptWriter;
 
 /**
@@ -48,7 +52,7 @@ public class CreateScriptsMojo extends AbstractMojo {
 	 * A comma separated list of platforms, the start script must be created
 	 * for. Supported values: windows, linux.
 	 */
-	@Parameter(defaultValue = "linux")
+	@Parameter(defaultValue = "linux, windows")
 	private String platforms;
 
 	/**
@@ -68,7 +72,7 @@ public class CreateScriptsMojo extends AbstractMojo {
 
 	@Override
 	public void execute() throws MojoExecutionException, MojoFailureException {
-		
+
 		File folder = IoFactory.file(PathUtils.path(this.outputDirectory,
 				FolderConstants.BIN));
 
@@ -78,16 +82,13 @@ public class CreateScriptsMojo extends AbstractMojo {
 
 		folder.mkdir();
 
-		StartScriptWriter writer = new StartScriptWriter();
-
-		writer.args(this.args).opts(this.opts).echo(this.echo)
-				.jar(this.finalName).folder(folder).preStart(this.preStart);
-
 		try {
 
 			for (Platform platform : Platform.fromString(this.platforms)) {
 
-				platform.behave(writer);
+				for (PlatformBehavioural<Void> writer :  this.getWriters(folder)) {
+					platform.behave(writer);
+				}
 
 			}
 
@@ -96,6 +97,25 @@ public class CreateScriptsMojo extends AbstractMojo {
 					"Exception while creating scripts.", e);
 		}
 
+	}
+
+	/**
+	 * Gets the scripts writers for creating the script files.
+	 * 
+	 * @param folder the scripts destination folder.
+	 * 
+	 * @return the list of script writers.
+	 */
+	private Collection<PlatformBehavioural<Void>> getWriters(File folder) {
+
+		StartScriptWriter startup = new StartScriptWriter().args(this.args)
+				.opts(this.opts).echo(this.echo).jar(this.finalName)
+				.folder(folder).process(this.finalName).preStart(this.preStart);
+
+		ShutdownScriptWriter shutdown = new ShutdownScriptWriter().process(
+				this.finalName).folder(folder);
+
+		return Arrays.asList(startup, shutdown);
 	}
 
 }

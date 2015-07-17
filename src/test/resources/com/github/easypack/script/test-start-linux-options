@@ -4,4 +4,6 @@ cd `dirname $0`/..
 
 JAVA_OPTS="$JAVA_OPTS -Xms1G -Xmx=3G -Denvironment=prod"
 
-java $JAVA_OPTS -jar libs/my-project.jar $JAVA_ARGS
+COMMAND="java $JAVA_OPTS -jar libs/my-project.jar $JAVA_ARGS"
+
+exec -a "my-project" $COMMAND

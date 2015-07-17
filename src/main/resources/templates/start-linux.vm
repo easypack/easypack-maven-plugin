@@ -15,8 +15,10 @@ JAVA_OPTS="$JAVA_OPTS $opts"
 JAVA_ARGS="$JAVA_ARGS $args"
 
 #end
+COMMAND="java $JAVA_OPTS -jar $jar $JAVA_ARGS"
+
 #if($echo.equals("java"))
 set -x
 
 #end
-java $JAVA_OPTS -jar $jar $JAVA_ARGS
+exec -a "${process}" $COMMAND

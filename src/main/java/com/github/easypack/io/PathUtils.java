@@ -24,7 +24,7 @@ public final class PathUtils {
 	}
 
 	/**
-	 * Build a file full/absolute name.
+	 * Builds a file full/absolute name.
 	 * 
 	 * @param extension
 	 *            the file extension.
@@ -63,7 +63,7 @@ public final class PathUtils {
 	}
 
 	/**
-	 * Transform a path into a valid one in the hosting Operating System,
+	 * Transforms a path into a valid one in the hosting Operating System,
 	 * specifically by changing the separator character to the expected.
 	 * 
 	 * @param path
@@ -79,5 +79,30 @@ public final class PathUtils {
 
 		return path.replace(PathSeparator.migrate(PathSeparator.get()),
 				PathSeparator.get());
+	}
+
+	/**
+	 * Builds a full file name with a .bat extension.
+	 * 
+	 * @param names
+	 *            the file name an folders.
+	 *  
+	 * @return the bat file name.
+	 */
+	public static String bat(String... names) {
+
+		return file("bat", names);
+	}
+
+	/**
+	 * Builds a full file name with a .sh extension.
+	 * 
+	 * @param names
+	 *            the file name an folders.
+	 *  
+	 * @return the sh file name.
+	 */
+	public static String sh(String ... names) {
+		return file("sh", names);
 	}
 }

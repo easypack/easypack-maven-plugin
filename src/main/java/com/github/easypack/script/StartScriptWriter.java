@@ -2,17 +2,11 @@ package com.github.easypack.script;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.Writer;
-import java.util.Properties;
 
-import org.apache.velocity.Template;
 import org.apache.velocity.VelocityContext;
-import org.apache.velocity.app.Velocity;
-import org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader;
 
 import com.github.easypack.constants.FolderConstants;
 import com.github.easypack.io.FileContent;
-import com.github.easypack.io.IoFactory;
 import com.github.easypack.io.PathUtils;
 import com.github.easypack.platform.PlatformBehavioural;
 
@@ -20,23 +14,9 @@ import com.github.easypack.platform.PlatformBehavioural;
  * Writes (creates) the start script to be added in the final artifact.
  * 
  * @author agusmunioz
- *
+ * 
  */
 public class StartScriptWriter implements PlatformBehavioural<Void> {
-
-	static {
-
-		Properties p = new Properties();
-		p.setProperty("resource.loader", "class");
-		p.setProperty("class.resource.loader.class",
-				ClasspathResourceLoader.class.getCanonicalName());
-
-		Velocity.init(p);
-	}
-
-	private static final String TEMPLATES = "/templates";
-
-	private static final String EXTENSION = ".vm";
 
 	private static final String START = "start";
 
@@ -48,8 +28,10 @@ public class StartScriptWriter implements PlatformBehavioural<Void> {
 
 	private String jar;
 
+	private String separator;
+
 	/**
-	 * Creates an intialized {@link StartScriptWriter}.
+	 * Creates an initialized {@link StartScriptWriter}.
 	 */
 	public StartScriptWriter() {
 		this.context = new VelocityContext();
@@ -57,51 +39,51 @@ public class StartScriptWriter implements PlatformBehavioural<Void> {
 
 	@Override
 	public Void linux() {
-		context.put("jar", FolderConstants.LIBS + "/" + jar);
-		this.write("linux", this.preStart.linux(), "sh");
+
+		this.separator = "/";
+
+		this.write(VelocityUtils.linux(START), PathUtils.sh(START),
+				this.preStart.linux());
+
 		return null;
 	}
 
 	@Override
 	public Void windows() {
-		context.put("jar", FolderConstants.LIBS + "\\" + jar);
-		this.write("windows", this.preStart.windows(), "bat");
+
+		this.separator = "\\";
+
+		this.write(VelocityUtils.windows(START), PathUtils.bat(START),
+				this.preStart.windows());
+
 		return null;
 	}
 
 	/**
-	 * Writes the start script in the filesystem.
+	 * Writes the file in the file system.
+	 * 
+	 * @param template
+	 *            the velocity template name.
 	 * 
 	 * @param name
-	 *            the template post-fix.
+	 *            the name of the final file.
 	 * 
 	 * @param preStart
-	 *            the pre-start script path to embed in the start script.
-	 * 
-	 * @param extension
-	 *            the script extension.
-	 * 
-	 * @throws RuntimeException
-	 *             if there is an error while creating the file.
+	 *            the pre-start script path.
 	 */
-	private void write(String name, String preStart, String extension) {
+	private void write(String template, String name, String preStart) {
 
-		Template template = Velocity.getTemplate(TEMPLATES + "/" + START + "-"
-				+ name + EXTENSION, "UTF-8");
+		try {
 
-		try (Writer writer = IoFactory.writer(folder,
-				PathUtils.file(extension, START))) {
-
+			context.put("jar", FolderConstants.LIBS + this.separator + this.jar);
 			context.put("preStart", FileContent.get(preStart));
 
-			template.merge(context, writer);
+			VelocityUtils.write(template, name, this.folder, this.context);
 
 		} catch (IOException e) {
-
 			throw new ScriptException(
 					"Un error occurred while creating the start scrtip.", e);
 		}
-
 	}
 
 	/**
@@ -113,7 +95,7 @@ public class StartScriptWriter implements PlatformBehavioural<Void> {
 	 * @return the script for further configuration or writing.
 	 */
 	public StartScriptWriter jar(String jar) {
-		this.jar = jar + ".jar";
+		this.jar = PathUtils.file("jar", jar);
 		return this;
 	}
 
@@ -168,6 +150,19 @@ public class StartScriptWriter implements PlatformBehavioural<Void> {
 	 */
 	public StartScriptWriter folder(File folder) {
 		this.folder = folder;
+		return this;
+	}
+
+	/**
+	 * Sets the application process name at OS level.
+	 * 
+	 * @param name
+	 *            the process name.
+	 * 
+	 * @return the script writer for further configuration or writing.
+	 */
+	public StartScriptWriter process(String name) {
+		context.put("process", name);
 		return this;
 	}
 
