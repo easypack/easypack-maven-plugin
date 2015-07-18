@@ -19,6 +19,7 @@ import org.apache.maven.artifact.versioning.VersionRange;
  * @author agusmunioz
  *
  */
+@SuppressWarnings("deprecation")
 public class ArtifactMock implements Artifact {
 
 	private File file;

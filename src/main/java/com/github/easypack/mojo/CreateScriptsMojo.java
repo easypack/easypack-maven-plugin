@@ -1,8 +1,8 @@
 package com.github.easypack.mojo;
 
 import java.io.File;
-import java.util.Arrays;
 import java.util.Collection;
+import java.util.LinkedList;
 
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
@@ -70,6 +70,13 @@ public class CreateScriptsMojo extends AbstractMojo {
 	@Parameter(defaultValue = "")
 	private String echo;
 
+	/**
+	 * Indicates if a shutdown script must be generated. Only supported for
+	 * Linux platform. Default: false.
+	 */
+	@Parameter(defaultValue = "false")
+	private Boolean shutdown = false;
+
 	@Override
 	public void execute() throws MojoExecutionException, MojoFailureException {
 
@@ -86,7 +93,7 @@ public class CreateScriptsMojo extends AbstractMojo {
 
 			for (Platform platform : Platform.fromString(this.platforms)) {
 
-				for (PlatformBehavioural<Void> writer :  this.getWriters(folder)) {
+				for (PlatformBehavioural<Void> writer : this.getWriters(folder)) {
 					platform.behave(writer);
 				}
 
@@ -102,20 +109,28 @@ public class CreateScriptsMojo extends AbstractMojo {
 	/**
 	 * Gets the scripts writers for creating the script files.
 	 * 
-	 * @param folder the scripts destination folder.
+	 * @param folder
+	 *            the scripts destination folder.
 	 * 
 	 * @return the list of script writers.
 	 */
 	private Collection<PlatformBehavioural<Void>> getWriters(File folder) {
 
+		Collection<PlatformBehavioural<Void>> writers = new LinkedList<PlatformBehavioural<Void>>();
+
 		StartScriptWriter startup = new StartScriptWriter().args(this.args)
 				.opts(this.opts).echo(this.echo).jar(this.finalName)
 				.folder(folder).process(this.finalName).preStart(this.preStart);
 
-		ShutdownScriptWriter shutdown = new ShutdownScriptWriter().process(
-				this.finalName).folder(folder);
+		writers.add(startup);
 
-		return Arrays.asList(startup, shutdown);
+		if (this.shutdown) {
+
+			writers.add(new ShutdownScriptWriter().process(this.finalName)
+					.folder(folder));
+		}
+
+		return writers;
 	}
 
 }

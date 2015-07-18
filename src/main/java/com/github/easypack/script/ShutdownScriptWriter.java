@@ -63,8 +63,6 @@ public class ShutdownScriptWriter implements PlatformBehavioural<Void> {
 
 	@Override
 	public Void windows() {
-		VelocityUtils.write(VelocityUtils.windows(SHUTDOWN),
-				PathUtils.bat(SHUTDOWN), this.folder, this.context);
 		return null;
 	}
 

@@ -35,26 +35,20 @@ public class CreateScriptsMojoTest {
 
 	private static final String TARGET = PathSeparator.get() + "target";
 
-	private CreateScriptsMojo mojo;
-
 	private StartScriptWriter start;
 
 	private ShutdownScriptWriter shutdown;
 
 	/**
-	 * Initializes each test with common mocking.
+	 * Initializes each test with common mocks.
 	 * 
 	 * @throws Exception
+	 *             mocks side effect.
 	 */
 	@Before
 	public void init() throws Exception {
 
 		PowerMockito.mockStatic(IoFactory.class);
-
-		this.mojo = (CreateScriptsMojo) MojoBuilder
-				.build(new CreateScriptsMojo()).with("outputDirectory", TARGET)
-				.with("finalName", "myProject")
-				.with("platforms", "linux,windows").with("echo", "").get();
 
 		this.start = PowerMockito.mock(StartScriptWriter.class);
 
@@ -102,19 +96,23 @@ public class CreateScriptsMojoTest {
 
 		try {
 
-			File binFolder = FileMock.mock(false);
+			File binFolder = this.mockBinFolder(false);
 
-			PowerMockito.when(
-					IoFactory.file(TARGET + PathSeparator.get()
-							+ FolderConstants.BIN)).thenReturn(binFolder);
+			CreateScriptsMojo mojo = (CreateScriptsMojo) MojoBuilder
+					.build(new CreateScriptsMojo())
+					.with("outputDirectory", TARGET)
+					.with("finalName", "myProject")
+					.with("platforms", "linux,windows").with("echo", "").get();
 
-			this.mojo.execute();
+			mojo.execute();
 
 			Mockito.verify(binFolder, Mockito.never()).delete();
 
 			Mockito.verify(binFolder, Mockito.times(1)).mkdir();
 
-			this.verifyWriter();
+			this.assertAllStarts();
+
+			this.assertNoShutdown();
 
 		} catch (Exception e) {
 			Assert.fail("Unexpected exception. " + e);
@@ -130,24 +128,121 @@ public class CreateScriptsMojoTest {
 
 		try {
 
-			File binFolder = FileMock.mock(true);
+			File binFolder = this.mockBinFolder(true);
 
-			PowerMockito.when(
-					IoFactory.file(TARGET + PathSeparator.get()
-							+ FolderConstants.BIN)).thenReturn(binFolder);
+			CreateScriptsMojo mojo = (CreateScriptsMojo) MojoBuilder
+					.build(new CreateScriptsMojo())
+					.with("outputDirectory", TARGET)
+					.with("finalName", "myProject")
+					.with("platforms", "linux,windows").with("echo", "").get();
 
-			this.mojo.execute();
+			mojo.execute();
 
 			Mockito.verify(binFolder, Mockito.times(1)).delete();
 
 			Mockito.verify(binFolder, Mockito.times(1)).mkdir();
 
-			this.verifyWriter();
+			this.assertAllStarts();
+
+			this.assertNoShutdown();
 
 		} catch (Exception e) {
 			Assert.fail("Unexpected exception. " + e);
 		}
 
+	}
+
+	/**
+	 * Test for creating scripts only for linux platform.
+	 */
+	@Test
+	public void linuxOnly() {
+
+		try {
+
+			this.mockBinFolder(true);
+
+			CreateScriptsMojo mojo = (CreateScriptsMojo) MojoBuilder
+					.build(new CreateScriptsMojo())
+					.with("outputDirectory", TARGET)
+					.with("finalName", "myProject").with("platforms", "linux")
+					.with("echo", "").get();
+
+			mojo.execute();
+
+			Mockito.verify(this.start, Mockito.times(1)).linux();
+
+			Mockito.verify(this.start, Mockito.times(0)).windows();
+
+			this.assertNoShutdown();
+
+		} catch (Exception e) {
+			e.printStackTrace();
+			Assert.fail("Unexpected exception. " + e);
+		}
+
+	}
+
+	/**
+	 * Test for creating scripts only for windows platform.
+	 */
+	@Test
+	public void windowsOnly() {
+
+		try {
+
+			this.mockBinFolder(true);
+
+			CreateScriptsMojo mojo = (CreateScriptsMojo) MojoBuilder
+					.build(new CreateScriptsMojo())
+					.with("outputDirectory", TARGET)
+					.with("finalName", "myProject")
+					.with("platforms", "windows").with("echo", "").get();
+
+			mojo.execute();
+
+			Mockito.verify(this.start, Mockito.times(0)).linux();
+
+			Mockito.verify(this.start, Mockito.times(1)).windows();
+
+			this.assertNoShutdown();
+
+		} catch (Exception e) {
+			e.printStackTrace();
+			Assert.fail("Unexpected exception. " + e);
+		}
+
+	}
+
+	/**
+	 * Test the shutdown scripts are created, that is to say, the creation is
+	 * invoked.
+	 */
+	@Test
+	public void shutdown() {
+
+		try {
+
+			this.mockBinFolder(true);
+
+			CreateScriptsMojo mojo = (CreateScriptsMojo) MojoBuilder
+					.build(new CreateScriptsMojo())
+					.with("outputDirectory", TARGET)
+					.with("finalName", "myProject")
+					.with("platforms", "linux, windows").with("echo", "")
+					.with("shutdown", true).get();
+
+			mojo.execute();
+
+			this.assertAllStarts();
+
+			Mockito.verify(this.shutdown, Mockito.times(1)).linux();
+
+			Mockito.verify(this.shutdown, Mockito.times(1)).windows();
+
+		} catch (Exception e) {
+			Assert.fail("Unexpected exception. " + e);
+		}
 	}
 
 	/**
@@ -160,30 +255,56 @@ public class CreateScriptsMojoTest {
 	@Test(expected = MojoExecutionException.class)
 	public void exception() throws MojoExecutionException, MojoFailureException {
 
-		File binFolder = FileMock.mock();
-
-		PowerMockito.when(
-				IoFactory.file(TARGET + PathSeparator.get()
-						+ FolderConstants.BIN)).thenReturn(binFolder);
+		this.mockBinFolder(true);
 
 		PowerMockito.when(this.start.linux()).thenThrow(
 				new RuntimeException(""));
 
-		this.mojo.execute();
+		CreateScriptsMojo mojo = (CreateScriptsMojo) MojoBuilder
+				.build(new CreateScriptsMojo()).with("outputDirectory", TARGET)
+				.with("finalName", "myProject")
+				.with("platforms", "linux,windows").with("echo", "").get();
+
+		mojo.execute();
 
 	}
 
 	/**
-	 * Verifies if the {@link StartScriptWriter} is called as expected.
+	 * Mocks the bin folder an the {@link IoFactory} for working with it.
+	 * 
+	 * @param exists
+	 *            if the bin folder exists.
+	 * 
+	 * @return the folder mock.
 	 */
-	private void verifyWriter() {
+	private File mockBinFolder(boolean exists) {
+
+		File folder = FileMock.mock(exists);
+
+		PowerMockito.when(
+				IoFactory.file(TARGET + PathSeparator.get()
+						+ FolderConstants.BIN)).thenReturn(folder);
+
+		return folder;
+	}
+
+	/**
+	 * Asserts all starts scripts were created for all platforms.
+	 */
+	private void assertAllStarts() {
 
 		Mockito.verify(this.start, Mockito.times(1)).linux();
 
 		Mockito.verify(this.start, Mockito.times(1)).windows();
-		
-		Mockito.verify(this.shutdown, Mockito.times(1)).linux();
+	}
 
-		Mockito.verify(this.shutdown, Mockito.times(1)).windows();
+	/**
+	 * Asserts no shutdown scripts were created for any platform.
+	 */
+	private void assertNoShutdown() {
+
+		Mockito.verify(this.shutdown, Mockito.times(0)).linux();
+
+		Mockito.verify(this.shutdown, Mockito.times(0)).windows();
 	}
 }
