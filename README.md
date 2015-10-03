@@ -30,7 +30,7 @@ The pom will look like:
 
 * _**Java applications in tar, zip or tar.gz**_: the final artifact is in tar, zip or tar.gz format.
 
-* _**Start script creation**_: start scripts for linux and/or windows are automatically created.
+* _**Start and stop script creation**_: start and stops scripts for linux and/or windows are automatically created.
 
 * _**Dependency management**_: the project dependencies are automatically included in the final artifact.
 
