@@ -1,4 +1,4 @@
-##EasyPack Maven Plugin
+## EasyPack Maven Plugin
 
 EasyPack Maven Plugin facilitates the distribution of Java applications in **tar**, **zip** and **tar.gz** formats.
 
